@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/pfizer/!svn/ver/178/multisite/trunk/www/sites/all/modules/custom/views_inputfield
+END
+views_inputfield.module
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/pfizer/!svn/ver/178/multisite/trunk/www/sites/all/modules/custom/views_inputfield/views_inputfield.module
+END
+views_inputfield.views.inc
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/pfizer/!svn/ver/74/multisite/trunk/www/sites/all/modules/custom/views_inputfield/views_inputfield.views.inc
+END
+views_inputfield_handler_field.inc
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/pfizer/!svn/ver/121/multisite/trunk/www/sites/all/modules/custom/views_inputfield/views_inputfield_handler_field.inc
+END
+views_inputfield.info
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/pfizer/!svn/ver/74/multisite/trunk/www/sites/all/modules/custom/views_inputfield/views_inputfield.info
+END

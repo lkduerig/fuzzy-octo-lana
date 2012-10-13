@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * Implementation of hook_views_api().
+ */
+function views_inputfield_views_api() {
+  return array(
+    'api' => 3,
+  );
+}
+
+/**
+ * Gets our field if it exists on the passed-in view.
+ *
+ * @return
+ *  The field object if found. Otherwise, FALSE.
+ */
+function views_inputfield_get_field($view) {
+  foreach ($view->field as $field_name => $field) {
+    if (is_a($field, 'views_inputfield_handler_field')) {
+      // Add in the view object for convenience.
+      $field->view = $view;
+      return $field;
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Confirmation step of the views multistep form.
+ */
+/*function views_inputfield_confirmation_form($form, $form_state, $view, $output) { 
+  $form = confirm_form($form,
+    t('Question?'),
+    array('path' => $_GET['q'], 'query' => $view->get_exposed_input())
+  );
+
+  return $form;
+}*/
+
+/**
+ * Implementation of hook_views_form_submit().
+ */
+function views_inputfield_views_form_submit($form, &$form_state) {
+  $view = $form_state['build_info']['args'][0];
+  $field = views_inputfield_get_field($view);
+  if (!$field) {
+    return;
+  }
+
+  // Advance to the confirmation form.
+  if ($form_state['step'] == 'views_form_views_form') {
+    $form_state['step'] = 'views_inputfield_confirmation_form';
+  }
+  elseif ($form_state['step'] == 'views_inputfield_confirmation_form') {
+    drupal_set_message('We have a winner!');
+    drupal_goto($_GET['q']);
+  }
+}

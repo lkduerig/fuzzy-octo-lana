@@ -1,0 +1,9 @@
+name = Views Form Input Field
+description = Custom implementation of views form functionality
+;project = views_form_inputfield
+core = 7.x
+version = 7.x-1.0
+dependencies[] = views
+package = Views
+
+files[] = views_inputfield_handler_field.inc
