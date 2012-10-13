@@ -1,37 +1,35 @@
-.view-materials p, 
-.view-materials table, 
+.view-materials p,
+.view-materials table,
 .view-materials fieldset {
-	margin-top: 0;
-	margin-bottom: 1em;
-}
-.view-materials fieldset  {
-/*	padding-bottom: 1em;*/
+  margin-top: 0;
+  margin-bottom: 1em;
 }
 
 /* Styles for table on first step of form */
-#views-form-materials-page .views-table th, 
+#views-form-materials-page .views-table th,
 #views-form-materials-page .views-table td {
-	border-bottom: 1px solid;
+  border-bottom: 1px solid;
 }
+
 #views-form-materials-page .views-table th {
-	vertical-align: bottom;
-	padding: 0 20px;
+  vertical-align: bottom;
+  padding: 0 20px;
 }
 
 #views-form-materials-page .views-table td {
-	vertical-align: top;
-	padding: 20px;
+  vertical-align: top;
+  padding: 20px;
 }
 
 #views-form-materials-page table h2 {
-	color: #787878;
-	margin: 0;
+  color: #787878;
+  margin: 0;
 }
 
-#views-form-materials-page table th h2  {
-	width: 0px;
-	overflow: visible;
-	white-space: nowrap;
+#views-form-materials-page table th h2 {
+  width: 0;
+  overflow: visible;
+  white-space: nowrap;
 }
 
 #views-form-materials-page.views_form_views_form fieldset#edit-contact {
@@ -39,40 +37,36 @@
 }
 
 #views-form-materials-page fieldset#edit-contact .fieldset-wrapper {
-	float: left;
+  float: left;
 }
 
 /* Styles for summary tables on later steps of form */
-
 #views-form-materials-page.summary .views-table th,
 #views-form-materials-page.summary .views-table td {
-	border-color: #ccc;
+  border-color: #ccc;
 }
+
 #views-form-materials-page.summary .views-table th {
-	padding: 10px 40px;
+  padding: 10px 40px;
 }
+
 #views-form-materials-page.summary .views-table td {
-	padding-left: 40px;
-	padding-right: 40px;
+  padding-left: 40px;
+  padding-right: 40px;
 }
 
 /* Fields */
-
 #views-form-materials-page td.views-field-field-thumbnail {
-	width: 100px;
+  width: 100px;
 }
+
 #views-form-materials-page.summary td.views-field-field-thumbnail {
-	width: 40px;
-}
-
-
-#views-form-materials-page td.views-field-field-thumbnail img {
-
+  width: 40px;
 }
 
 #views-form-materials-page label {
-	display: inline;
-	font-weight: bold;
+  display: inline;
+  font-weight: bold;
 }
 
 #views-form-materials-page.summary table,
@@ -80,39 +74,36 @@
   background-color: #edebec;
 }
 
-
-
 #views-form-materials-page.views_form_views_form .form-item,
 #views-form-materials-page .form-actions {
-	margin: 0 0 .5em;
+  margin: 0 0 .5em;
 }
 
 #views-form-materials-page.summary .form-item {
-	margin: 0;
+  margin: 0;
 }
 
-
 #views-form-materials-page .views-field-field-download div,
-#views-form-materials-page .form-text{
+#views-form-materials-page .form-text {
   border: 1px solid #ccc;
 }
 
 #views-form-materials-page .form-text {
-	color: #787878;
-	font-size: 16px;
-	height: 40px;
+  color: #787878;
+  font-size: 16px;
+  height: 40px;
 }
 
 #views-form-materials-page input.error {
-	border-color: #ff0000;
+  border-color: #ff0000;
 }
 
 #views-form-materials-page .views-field-views-inputfield .form-text {
-	text-align: center;
+  text-align: center;
 }
 
 #views-form-materials-page .views-field-field-download div,
-#views-form-materials-page .form-actions  {
+#views-form-materials-page .form-actions {
   display: inline;
   float: left;
   height: 40px;
@@ -121,8 +112,9 @@
 }
 
 #views-form-materials-page .views-field-field-download div {
-	background: transparent url('img/button_gradient.png') repeat-x;
+  background: transparent url('img/button_gradient.png') repeat-x;
 }
+
 #views-form-materials-page .form-actions {
   background-color: #e63e00;
   margin-bottom: 1em;
@@ -136,15 +128,16 @@
 }
 
 #views-form-materials-page .views-field-field-download a {
-	background: transparent url('img/arrow_red_large.png') no-repeat right 50%;
-	padding: 10px 25px 10px 0;
+  background: transparent url('img/arrow_red_large.png') no-repeat right 50%;
+  padding: 10px 25px 10px 0;
 }
+
 #views-form-materials-page .form-submit {
   background: transparent url('img/arrow_white_large.png') no-repeat right 50%;
   border: 0 none;
   border-radius: 0;
   color: #fff;
-	padding: 0 20px 0 0;
+  padding: 0 20px 0 0;
   text-shadow: none;
 }
 

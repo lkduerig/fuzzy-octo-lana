@@ -1,400 +1,372 @@
 <?php
-/**
- * @file
- * Code for the Material ordering feature.
- */
+  /**
+   * @file
+   * Code for the Material ordering feature.
+   */
 
-include_once('materialordering.features.inc');
-
-
-function materialordering_menu() {
-  $items = array();
-
-  $items['admin/config/materialordering'] = array(
-    'title' => 'Material ordering',
-    'description' => "Configuration settings for Material ordering module",
-    'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('administer site configuration'),
-    'position' => 'right',
-    'file' => 'system.admin.inc',
-    'file path' => drupal_get_path('module', 'system'),
-  );
-
-   $items['admin/config/materialordering/settings'] = array(
-    'title' => 'Material ordering settings',
-    'description' => "Common settings for material ordering.",
-    'access callback' => 'user_access',
-    'access arguments' => array('administer site configuration'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('materialordering_settings_form'),
-    'file' => 'materialordering.admin.inc',
-  );
-
-  return $items;
-}
+  include_once('materialordering.features.inc');
 
 
-/*
- * Implementation of hook_form_alter()
- */
-function materialordering_form_alter(&$form, &$form_state, $form_id) {
-  if ($form_id == 'views_form_materials_page') {
-    
-		$form['#attributes']['class'][] = $form_state['step'];
-	
-		$view = $form_state['build_info']['args'][0];
-		
-    global $user;    
-    $access_roles = $view->display['default']->handler->options['access']['role'] ;
-    
-    $form['customer'] = array(
-      '#type' => 'hidden',
-      '#value' => implode(', ', array_intersect_key($user->roles, $access_roles)),
-    ); 
+  /*
+  * Implementation of hook_menu()
+  * Menu items for the material ordering configuration pages
+  */
+  function materialordering_menu()
+  {
+    $items = array();
 
-    $form['contact'] = array(
-      '#type' => 'fieldset',
-      '#weight' => 70,
-    );  
-    
-    $form['contact']['contact_information'] = array(
-      '#type' => 'item',
-    	'#prefix' => '<h2>',
-  		'#suffix' => '</h2>',
-      '#markup' => t('Contact information'),
+    $items['admin/config/materialordering'] = array(
+      'title' => 'Material ordering',
+      'description' => "Configuration settings for Material ordering module",
+      'page callback' => 'system_admin_menu_block_page',
+      'access arguments' => array('administer site configuration'),
+      'position' => 'right',
+      'file' => 'system.admin.inc',
+      'file path' => drupal_get_path('module', 'system'),
     );
-    
-    $form['contact']['name'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Name'),
-      '#title_display' => 'invisible',
-      '#default_value' => t('Name'),
-      '#required' => TRUE,
-    );
-    
-    $form['contact']['company'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Company'),
-      '#title_display' => 'invisible',
-      '#default_value' => t('Company'),
-      '#required' => TRUE,
-    );
-    
-    $form['contact']['address'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Address'),
-      '#title_display' => 'invisible',
-      '#default_value' => t('Address'),
-      '#required' => TRUE,
-    );
-    
-    $form['contact']['telephone'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Telephone'),
-      '#title_display' => 'invisible',
-      '#default_value' => t('Telephone'),
-      '#required' => TRUE,
-    );
-    
-    $form['contact']['email'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Email'),
-      '#title_display' => 'invisible',
-      '#default_value' => t('Email'),
-      '#required' => TRUE,
-    );
-    
-    $form['contact']['email_allowed'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Contact by email'),
-      '#default_value' => TRUE,
-      '#description' => t('I may be contacted by email about my order'),
-//      '#required' => TRUE,
-    );
-    
-		switch($form_state['step']) { 
-			case 'views_form_views_form':
-			
-				// Alter view elements
-				$view->set_title(t('Order materials')); // t('Tilattava materiaali');
-					
-				// Alter form elements
-				 $form['#prefix'] = '<p>' . t('The materials listed below can be ordered to your workplace or downloaded directly to your computer. 
-						Materials will be delivered via standard post.') .'</p>';
-				//		t('Alla olevat materiaalit voit tilata työpaikallesi tai ladata suoraan koneellesi. Materiaalit toimitetaan postitse.');
-				
-				// Move submit button to contact fieldset
-	    	$form['contact']['actions'] = $form['actions'];
-	    	$form['contact']['actions']['submit']['#value'] = t('Send');
-	   		unset($form['actions']);
-	   		
-				break;
 
-			case 'materialordering_confirmation_form':
-			
-				// Alter view elements
-				$view->set_title(t('Confirmation'));
-				
-				// Alter form elements
-				 $form['#prefix'] = '<p>' . t('Please verify the following details.') . '</p>';
-				
-    		// Alter contact fields
-				$form['contact']['#weight'] = 30;  // Moves contact information above the view 
-				unset($form['contact']['contact_information']);
-    		foreach (element_children($form['contact']) as $key) {
-    			if ($form['contact'][$key]['#type'] == 'textfield') {
-      			$form['contact'][$key]['#title'] .= ': ';
-      			$form['contact'][$key]['#title_display'] = 'before';
-						$form['contact'][$key]['#type'] = 'item';
-						$form['contact'][$key]['#required'] = FALSE;
-						$form['contact'][$key]['#markup'] = $form_state['values'][$key];
-					}
-				}
-				
-				$form['contact']['email_allowed']['#type'] = 'item';
-				$form['contact']['email_allowed']['#title_display'] = 'invisible';
-				
-				break;
-			
-			case 'materialordering_submitted_form':
+    $items['admin/config/materialordering/settings'] = array(
+      'title' => 'Material ordering settings',
+      'description' => "Common settings for material ordering.",
+      'access callback' => 'user_access',
+      'access arguments' => array('administer site configuration'),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('materialordering_settings_form'),
+      'file' => 'materialordering.admin.inc',
+    );
 
-				// Alter view elements
-				// Why doesn't this work?
-				$view->set_title(t('Thank you for your order!')); // t('Kiitos tilauksesta!')
-					
-				// Alter form elements
-				$form['#prefix'] = '<p>'. t('The following materials will be delivered via standard post within 2-6 business days.') .'</p>';
-														// t('Alla olevat materiaalit voit toimitetaan postitse 2-6 vrk:n kuluesssa.');
-
-				// Alter contact fields
-				unset($form['contact']);
-				break;
-		}
-
+    return $items;
   }
-}
 
-/*
- * Implementation of hook_views_form_validate()
- */
-function materialordering_views_form_validate ($form, &$form_state) {
-	if ($form_state['step'] == 'views_form_views_form') {
-  
-		foreach (element_children($form['contact']) as $key) {
-			if (isset($form['contact'][$key]) && $form['contact'][$key]) {
-				if (!empty($form['contact'][$key]['#required']) && $form['contact'][$key]['#value'] == $form['contact'][$key]['#default_value']) {
-					form_error($form['contact'][$key], t('!name field is required.', array('!name' => $form['contact'][$key]['#title'])));
-				}
-			}
-		} 
-		
-		if (!valid_email_address($form['contact']['email']['#value'])) {
-			form_error($form['contact']['email'], t('Please enter a valid email address'));
-		}
-		
-		foreach (element_children($form['views_inputfield']) as $key) {
-			if (isset($form['views_inputfield'][$key]) && $form['views_inputfield'][$key]['#value']) {
-				$field = TRUE; 
-				$value = $form['views_inputfield'][$key]['#value'];
-				if ($value !== '' && (!is_numeric($value) || intval($value) != $value || $value <= 0 || $value > 10)) {
-					form_error($form['views_inputfield'][$key], t('You have entered an invalid quantity.'));
-				}
-			}
-		}
-		
-		if(empty($field)) {
-			form_error($form['views_inputfield'], t('You have not selected any items.'));
-		}
-  }
-}
+  /*
+  * Implementation of hook_form_alter()
+  */
+  function materialordering_form_alter(&$form, &$form_state, $form_id)
+  {
+    if ($form_id == 'views_form_materials_page') {
 
-/*
- * Implementation of hook_views_form_submit()
- */
-function materialordering_views_form_submit($form, &$form_state) {
+      // Add a class to allow different styling for each step of the form
+      $form['#attributes']['class'][] = $form_state['step'];
 
-//		$view = $form_state['build_info']['args'][0];
+      // The view for the ordering form
+      $view = $form_state['build_info']['args'][0];
 
-	$form_state['rebuild'] = TRUE;
+      // Adding additional form elements
+      global $user;
+      $access_roles = $view->display['default']->handler->options['access']['role'];
 
-  
+      $form['customer'] = array(
+        '#type' => 'hidden',
+        '#value' => implode(', ', array_intersect_key($user->roles, $access_roles)),
+      );
 
-//	$form_state['rebuild_info'] = $form_state['build_info'];
-	switch($form_state['step']) { 
-		case 'views_form_views_form': 
-			$form_state['step'] = 'materialordering_confirmation_form';
-      // save form values
-      $form_state['storage']['values'] = $form_state['values'];
-			break;
+      $form['contact'] = array(
+        '#type' => 'fieldset',
+        '#weight' => 70,
+      );
 
-		case 'materialordering_confirmation_form':
-			$form_state['step'] = 'materialordering_submitted_form';
-			
-				// Building $params to pass to email
+      $form['contact']['contact_information'] = array(
+        '#type' => 'item',
+        '#prefix' => '<h2>',
+        '#suffix' => '</h2>',
+        '#markup' => t('Contact information'),
+      );
 
-//      $debug = $form_state;
-//      unset($debug['build_info']['args'][0]);
-//      print_r($debug);
-      
-			$params = $form_state['storage']['values'];
+      $form['contact']['name'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Name'),
+        '#title_display' => 'invisible',
+        '#default_value' => t('Name'),
+        '#required' => TRUE,
+      );
 
-			foreach ($form_state['values']['views_inputfield'] as $key => $value) {
-				if(isset($value) && $value) {
-					$params['order'][$form_state['build_info']['args'][0]->result[$key]->node_title] = $value;
-				}
-			}
-			
-			global $language;
-			 
-			// Send order email
-		  $order_email = drupal_mail('materialordering', 'order_email', '', $language, $params);
-			
-			if (!empty($order_email['result'])) {
-				// Send confirmation email to customer
-				$confirm_email = drupal_mail('materialordering', 'confirm_email', '', $language, $params);
-				if(!empty($confirm_email['result'])) {
-					drupal_set_message('Thank you for your order.');
-				}
-				else {
-					drupal_set_message('Your order has been sent but we were unable to send you a confirmation email. Please contact the site administrator for help.', 'error');
-				}
-			}
-			else {
-				drupal_set_message('An error has occurred, your order has not been sent. Please contact the site administrator if the problem persists.', 'error');
+      $form['contact']['company'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Company'),
+        '#title_display' => 'invisible',
+        '#default_value' => t('Company'),
+        '#required' => TRUE,
+      );
 
-			}
-			break;
-			
-		case 'materialordering_submitted_form':
-			break;
-	}	
-}
+      $form['contact']['address'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Address'),
+        '#title_display' => 'invisible',
+        '#default_value' => t('Address'),
+        '#required' => TRUE,
+      );
 
+      $form['contact']['telephone'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Telephone'),
+        '#title_display' => 'invisible',
+        '#default_value' => t('Telephone'),
+        '#required' => TRUE,
+      );
 
-/* 
- * Confirmation form is returned with this function
- */
-function materialordering_confirmation_form ($form, &$form_state, $view, $output) {
+      $form['contact']['email'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Email'),
+        '#title_display' => 'invisible',
+        '#default_value' => t('Email'),
+        '#required' => TRUE,
+      );
 
-	// materialordering_summary function removes unselected rows and other elements from the view
-	$output = materialordering_summary($form_state, $view);
+      $form['contact']['email_allowed'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Contact by email'),
+        '#default_value' => TRUE,
+        '#description' => t('I may be contacted by email about my order'),
+      );
 
-  $form = views_form_views_form($form, $form_state, $view, $output);
-	$form['#attributes']['class'][] = 'summary';
-	$form['actions']['submit']['#value'] = t('Confirm');
-	
-	foreach (element_children($form['views_inputfield']) as $key) {
-//		$form['views_inputfield'][$key]['#attributes']['class'][]  = 'disabled' ;
-		$form['views_inputfield'][$key]['#attributes']['readonly'] = array('readonly') ;
-	}
-  return $form;
-}
+      switch ($form_state['step']) {
 
-/*
- * Return confirmation form that the order has been sent
- */
-function materialordering_submitted_form ($form, &$form_state, $view, $output) { 
+        // Initial ordering form
+        case 'views_form_views_form':
 
-/*   The view title can't seem to be set the same way in form_alter function, 
-				submitted form has no title.
-*/
-  
-	$output = materialordering_summary($form_state, $view);    
-	$form = views_form_views_form($form, $form_state, $view, $output);
+          // Alter view elements
+          $view->set_title(t('Order materials'));
 
-	foreach (element_children($form['views_inputfield']) as $key) {
-		$form['views_inputfield'][$key]['#attributes']['readonly'] = array('readonly') ;
-	}
-  
-//	$form = $form_state['complete form'];
-	$form['#attributes']['class'][] = 'summary';
-	unset($form['actions']);
-  
-  return $form;
-}
+          // Alter form elements
+          $form['#prefix'] = '<p>' . t('The materials listed below can be
+            ordered to your workplace or downloaded directly to your computer.
+						Materials will be delivered via standard post.') . '</p>';
 
-/* Generate an updated view of selected items */
-function materialordering_summary($form_state, &$view) {
+          // Move submit button to contact fieldset
+          $form['contact']['actions'] = $form['actions'];
+          $form['contact']['actions']['submit']['#value'] = t('Send');
+          unset($form['actions']);
 
-//	$args = array();
-	foreach($form_state['values']['views_inputfield'] as $key => $value) {
-		if($value) { 
-	//		$args[] = $view->result[$key]->nid;
-		}
-		else {
-			unset($view->result[$key]);
-		}
-	}
-//	$args = implode('+', $args) ;
-//	$view->set_arguments(array($args)); // Set arguments for only selected materials
+          break;
 
-	$view->field['field_download']->options['exclude'] = TRUE;
-	$view->field['field_thumbnail']->options['label'] = t('Order summary');
-	$view->field['field_thumbnail']->options['element_label_type'] = 'h2';
-	$view->field['views_inputfield']->options['inputfield']['description'] = '';
-	$output = $view->style_plugin->render($view->result);
+        // Confirmation form
+        case 'materialordering_confirmation_form':
 
-	
-	return $output;
-}
+          // Alter view elements
+          $view->set_title(t('Confirmation'));
 
+          // Alter form elements
+          $form['#prefix'] = '<p>' . t('Please verify the following details.') . '</p>';
 
-/* 
- * Implementation of hook_views_data_alter(&$data)
- *//*
-function materialordering_views_data_alter(&$data) {
-}
+          // Alter contact fields
+          // Move contact information above the view
+          $form['contact']['#weight'] = 30;
+          unset($form['contact']['contact_information']);
+          foreach (element_children($form['contact']) as $key) {
+            if ($form['contact'][$key]['#type'] == 'textfield') {
+              $form['contact'][$key]['#title'] .= ': ';
+              $form['contact'][$key]['#title_display'] = 'before';
+              $form['contact'][$key]['#type'] = 'item';
+              $form['contact'][$key]['#required'] = FALSE;
+              $form['contact'][$key]['#markup'] = $form_state['values'][$key];
+            }
+          }
 
-/* 
- * Implementation of hook_views_pre_build(&$view)
- *//*
-function materialordering_views_pre_build(&$view) {      
-}
+          $form['contact']['email_allowed']['#type'] = 'item';
+          $form['contact']['email_allowed']['#title_display'] = 'invisible';
 
-/* 
- * Implementation of hook_views_pre_render(&$view)
- *//*
-function materialordering_views_pre_render(&$view) {
-}
+          break;
 
-/*
- * Implementation of hook_views_pre_view()
- *//*
- function materialordering_views_pre_view(&$view) {	
- }
- 
- /*
- * Implementation of hook_mail()
- */
-function materialordering_mail ($key, &$message, $params) {
+        // Final form
+        case 'materialordering_submitted_form':
 
-  switch ($key) {
-    case 'order_email':
-      $message['to'] = variable_get('materialordering_emails_to');
-      if (variable_get('materialordering_emails_cc')) {
-        $message['headers']['cc'] = variable_get('materialordering_emails_cc');
+          // Alter form elements
+          $form['#prefix'] = '<p>' . t('The following materials will be
+            delivered via standard post within 2-6 business days.') . '</p>';
+
+          // Alter contact fields
+          unset($form['contact']);
+          break;
       }
-      $message['subject'] = 'Order from ' . $params['name'];
-      break;
-    case 'confirm_email':	// Details to construct an email confirmation to the user. Not sure if this is required or not.
-      $message['to'] = $params['email'];
-      $message['subject'] = variable_get('site_name') . ': Order confirmation';
-      $message['body'][] = 'Thank you for your order! Your order details are as follows:';
-      break;
+    }
   }
-   
-  $message['body'][] = "&nbsp;"; // Impossibly difficult to get Drupal to leave a linefeed alone
-  $message['body'][] =	'<h1>' . t('Contact information') . '</h1>';
-  $message['body'][] =	t('Customer: ') .$params['customer'];
-  $message['body'][] =	t('Name: ') 	.$params['name'];
-  $message['body'][] =	t('Company: ') 	.$params['company'];
-  $message['body'][] =	t('Address: ') 	.$params['address'];
-  $message['body'][] =	t('Telephone: ').$params['telephone'];
-  $message['body'][] =	t('Email: ') 	.$params['email'];
-  $message['body'][] = "&nbsp;";
 
-  $message['body'][] =	'<h2>' . t('Order details') . '</h2>';
-  foreach ($params['order'] as $title => $quantity) {
-    $message['body'][] = $quantity . ' ' . $title;
+  /*
+  * Implementation of hook_views_form_validate()
+  */
+  function materialordering_views_form_validate($form, &$form_state)
+  {
+    if ($form_state['step'] == 'views_form_views_form') {
+
+      // Iterate over each field in the contact information fieldset to ensure
+      // all mandatory fields bave been filled.
+      foreach (element_children($form['contact']) as $key) {
+        if (isset($form['contact'][$key]) && $form['contact'][$key]) {
+          $field = $form['contact'][$key];
+          // Check if the field is mandatory
+          if (!empty($field['#required'])) {
+            // Drupal has already checked that all mandatory fields are not empty,
+            // here check that the user has actually changed the default value
+            if ($field['#value'] == $field['#default_value']) {
+              form_error($form['contact'][$key], t('!name field is required.', array('!name' => $field['#title'])));
+            }
+          }
+        }
+      }
+
+      if (!valid_email_address($form['contact']['email']['#value'])) {
+        form_error($form['contact']['email'], t('Please enter a valid email address'));
+      }
+
+      foreach (element_children($form['views_inputfield']) as $key) {
+        if (isset($form['views_inputfield'][$key]) && $form['views_inputfield'][$key]['#value']) {
+          $field = TRUE;
+          $value = $form['views_inputfield'][$key]['#value'];
+
+          if ($value !== '' && (!is_numeric($value) || intval($value) != $value || $value <= 0 || $value > 10)) {
+            form_error($form['views_inputfield'][$key], t('You have entered an invalid quantity.'));
+          }
+        }
+      }
+
+      if (empty($field)) {
+        form_error($form['views_inputfield'], t('You have not selected any items.'));
+      }
+    }
   }
-}
+
+  /*
+  * Implementation of hook_views_form_submit()
+  */
+  function materialordering_views_form_submit($form, &$form_state)
+  {
+    $form_state['rebuild'] = TRUE;
+
+    switch ($form_state['step']) {
+      case 'views_form_views_form':
+        $form_state['step'] = 'materialordering_confirmation_form';
+        // save form values
+        $form_state['storage']['values'] = $form_state['values'];
+        break;
+
+      case 'materialordering_confirmation_form':
+        $form_state['step'] = 'materialordering_submitted_form';
+
+        // Building $params to pass to email
+        $params = $form_state['storage']['values'];
+
+        foreach ($form_state['values']['views_inputfield'] as $key => $value) {
+          if (isset($value) && $value) {
+            $params['order'][$form_state['build_info']['args'][0]->result[$key]->node_title] = $value;
+          }
+        }
+
+        global $language;
+
+        // Send order email
+        $order_email = drupal_mail('materialordering', 'order_email', '', $language, $params);
+
+        if (!empty($order_email['result'])) {
+          // Send confirmation email to customer
+          $confirm_email = drupal_mail('materialordering', 'confirm_email', '', $language, $params);
+          if (!empty($confirm_email['result'])) {
+            drupal_set_message('Thank you for your order.');
+          } else {
+            drupal_set_message('Your order has been sent but we were unable to
+              send you a confirmation email. Please contact the site
+              administrator for help.', 'error');
+          }
+        } else {
+          drupal_set_message('An error has occurred, your order has not been
+            sent. Please contact the site administrator if the problem persists.', 'error');
+        }
+        break;
+
+      case 'materialordering_submitted_form':
+        break;
+    }
+  }
+
+  /*
+  * Confirmation form is returned with this function
+  */
+  function materialordering_confirmation_form($form, &$form_state, $view, $output)
+  {
+    // materialordering_summary function removes unselected rows and other elements from the view
+    $output = materialordering_summary($form_state, $view);
+
+    $form = views_form_views_form($form, $form_state, $view, $output);
+    $form['#attributes']['class'][] = 'summary';
+    $form['actions']['submit']['#value'] = t('Confirm');
+
+    foreach (element_children($form['views_inputfield']) as $key) {
+      $form['views_inputfield'][$key]['#attributes']['readonly'] = array('readonly');
+    }
+    return $form;
+  }
+
+  /*
+  * Return confirmation form that the order has been sent
+  */
+  function materialordering_submitted_form($form, &$form_state, $view, $output)
+  {
+    $output = materialordering_summary($form_state, $view);
+    $form = views_form_views_form($form, $form_state, $view, $output);
+
+    foreach (element_children($form['views_inputfield']) as $key) {
+      $form['views_inputfield'][$key]['#attributes']['readonly'] = array('readonly');
+    }
+
+    $form['#attributes']['class'][] = 'summary';
+    unset($form['actions']);
+
+    return $form;
+  }
+
+  /*
+  * Generate an updated view of selected items
+  */
+  function materialordering_summary($form_state, &$view)
+  {
+    foreach ($form_state['values']['views_inputfield'] as $key => $value) {
+      if (!$value) {
+        // Remove items from summay form that the user has not requested.
+        unset($view->result[$key]);
+      }
+    }
+
+    $view->field['field_download']->options['exclude'] = TRUE;
+    $view->field['field_thumbnail']->options['label'] = t('Order summary');
+    $view->field['field_thumbnail']->options['element_label_type'] = 'h2';
+    $view->field['views_inputfield']->options['inputfield']['description'] = '';
+    $output = $view->style_plugin->render($view->result);
+
+    return $output;
+  }
+
+  /*
+  * Implementation of hook_mail()
+  */
+  function materialordering_mail($key, &$message, $params)
+  {
+    switch ($key) {
+      case 'order_email':
+        $message['to'] = variable_get('materialordering_emails_to');
+        if (variable_get('materialordering_emails_cc')) {
+          $message['headers']['cc'] = variable_get('materialordering_emails_cc');
+        }
+        $message['subject'] = 'Order from ' . $params['name'];
+        break;
+
+      case 'confirm_email': // Details to construct an email confirmation to the user.
+        $message['to'] = $params['email'];
+        $message['subject'] = variable_get('site_name') . ': Order confirmation';
+        $message['body'][] = 'Thank you for your order! Your order details are as follows:';
+        break;
+    }
+
+    $message['body'][] = "&nbsp;";
+    $message['body'][] = '<h1>' . t('Contact information') . '</h1>';
+    $message['body'][] = t('Customer: ') . $params['customer'];
+    $message['body'][] = t('Name: ') . $params['name'];
+    $message['body'][] = t('Company: ') . $params['company'];
+    $message['body'][] = t('Address: ') . $params['address'];
+    $message['body'][] = t('Telephone: ') . $params['telephone'];
+    $message['body'][] = t('Email: ') . $params['email'];
+    $message['body'][] = "&nbsp;";
+
+    $message['body'][] = '<h2>' . t('Order details') . '</h2>';
+    foreach ($params['order'] as $title => $quantity) {
+      $message['body'][] = $quantity . ' ' . $title;
+    }
+  }

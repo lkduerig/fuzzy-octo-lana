@@ -1,7 +1,7 @@
 name = "Material ordering"
 description = "Lists materials that can be downloaded or ordered and provides an ordering form."
 core = "7.x"
-package = "Features"
+package = "Custom"
 php = "5.2.4"
 version = "7.x-1.0"
 project = "materialordering"

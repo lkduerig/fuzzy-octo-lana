@@ -1,22 +1,20 @@
 <?php
 
-class views_inputfield_handler_field extends views_handler_field {
+class views_inputfield_handler_field extends views_handler_field
+{
 
   function init(&$view, &$options) {
     parent::init($view, $options);
   }
-  
+
   function option_definition() {
     $options = parent::option_definition();
 
     $options['inputfield'] = array(
       'contains' => array(
-        //'id'
-        //'type'
         'title' => array('default' => ''),
         'size' => array('default' => 60),
         'maxlength' => array('default' => 128),
-        //'name' => array('default' => ''),
         'default_value' => array('default' => ''),
         'description' => array('default' => ''),
         'class' => array('default' => ''),
@@ -27,11 +25,10 @@ class views_inputfield_handler_field extends views_handler_field {
 
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
-    
+
     $form['inputfield'] = array(
       '#type' => 'fieldset',
       '#title' => t('Inputfield settings'),
-   //   '#description' => t('You may use token substitutions from the rewriting section in this class'),
       '#collapsible' => TRUE,
       '#collapsed' => FALSE,
     );
@@ -41,7 +38,7 @@ class views_inputfield_handler_field extends views_handler_field {
       '#title' => t('Title'),
       '#default_value' => $this->options['inputfield']['title'],
       '#description' => t(''),
-    );   
+    );
     $form['inputfield']['size'] = array(
       '#type' => 'textfield',
       '#title' => t('Size'),
@@ -51,13 +48,7 @@ class views_inputfield_handler_field extends views_handler_field {
       '#type' => 'textfield',
       '#title' => t('Maxlength'),
       '#default_value' => $this->options['inputfield']['maxlength'],
-    );/*
-    $form['inputfield']['name'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Name'),
-      '#default_value' => $this->options['inputfield']['name'],
-      '#description' => t(''),
-    );   */
+    );
     $form['inputfield']['default_value'] = array(
       '#type' => 'textfield',
       '#title' => t('Default value'),
@@ -92,17 +83,14 @@ class views_inputfield_handler_field extends views_handler_field {
     $form[$field_name] = array(
       '#tree' => TRUE,
     );
+
     // At this point, the query has already been run, so we can access the results
     foreach ($this->view->result as $row_id => $row) {
-    
-//      $entity_id = $this->get_value($row);
-    
       $form[$field_name][$row_id] = array(
         '#type' => 'textfield',
         '#title' => $this->options['inputfield']['title'],
         '#size' => $this->options['inputfield']['size'],
         '#maxlength' => $this->options['inputfield']['maxlength'],
-//        '#name' =>$this->options['inputfield']['title'],
         '#attributes' => array('class' => array($this->options['inputfield']['class'])),
         '#default_value' => $this->options['inputfield']['default_value'],
         '#description' => $this->options['inputfield']['description'],

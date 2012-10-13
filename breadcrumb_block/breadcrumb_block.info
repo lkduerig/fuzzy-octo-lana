@@ -1,0 +1,7 @@
+name = Breadcrumb block
+description = A simple block to move the breadcrumb to other locations on the page
+core = 7.x
+package = Other
+version = 7.x-1.0
+project = breadcrumb_block
+;dependencies[] = commerce_cart

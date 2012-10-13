@@ -1,0 +1,37 @@
+<?php
+/**
+ * @file
+ * Code for the Breadcrumb block.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function breadcrumb_block_block_info() {
+  $blocks = array();
+
+  $blocks['breadcrumb_block'] = array(
+    'info' => t('Breadcrumb block'),
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function breadcrumb_block_block_view($delta) {
+  $block = array();
+
+  switch ($delta) {
+    case 'breadcrumb_block':
+      $block['content'] = array(
+        '#markup' => theme('breadcrumb', array('breadcrumb' => drupal_get_breadcrumb())),
+      );
+      break;
+  }
+  if (!empty($block['content']['#markup'])) {
+    return $block;
+  }
+}
+
+
