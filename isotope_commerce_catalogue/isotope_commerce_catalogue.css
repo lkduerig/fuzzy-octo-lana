@@ -1,0 +1,11 @@
+#isotope-options ul {
+  list-style: none outside none;
+  margin: 0;
+}
+
+#isotope-options li {
+  display: block;
+  float: left;
+  padding: 3px 10px;
+  text-align: center;
+}

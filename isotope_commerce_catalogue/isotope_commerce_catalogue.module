@@ -1,0 +1,56 @@
+<?php
+/**
+ * @file
+ * Code for the Isotope Commerce Catalogue feature.
+ */
+
+include_once('isotope_commerce_catalogue.features.inc');
+
+/**
+ * Catalogue view and filtering block
+ */
+function isotope_commerce_catalogue_views_pre_render(&$view) {
+
+  switch ($view->name) {
+    // The main content area of the catalogue
+    case 'isotope_commerce_catalogue' :
+      $path = drupal_get_path('module', 'isotope_commerce_catalogue');
+      // Get stylesheet
+      drupal_add_css($path . '/isotope_commerce_catalogue.css');
+      // JS to help with view layout
+      drupal_add_js($path . '/isotope_commerce_catalogue.js');
+
+      // Add an additional link to view all products.
+      $view_all = array(
+        'rendered' => array(
+          '#markup' => t('All products'),
+          '#access' => 1,
+        )
+      );
+
+      // Views isotope template doesn't leave anything available to add zebra
+      // classes, so rather than rewrite the template and js, just hijack the
+      // tags field.
+      $zebra = array(
+        'rendered' => array(
+          '#markup' => 'odd',
+        ),
+      );
+
+      foreach ($view->result as $key => $result) {
+        array_unshift(&$view->result[$key]->field_field_tags, $view_all);
+        array_unshift(&$view->result[$key]->field_field_tags, $zebra);
+        $zebra['rendered']['#markup'] = $zebra['rendered']['#markup'] == 'odd' ? 'even' : 'odd';
+      }
+      break;
+
+    // The isotope filtering block to filter the main view content
+    case 'isotope_commerce_catalogue_filter_block' :
+      // An additional link to view all products
+      $view_all = array('taxonomy_term_data_name' => t('All products'));
+      array_unshift(&$view->result, (object)$view_all);
+      break;
+  }
+}
+
+
