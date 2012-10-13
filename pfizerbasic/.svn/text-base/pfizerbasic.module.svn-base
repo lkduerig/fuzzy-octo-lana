@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Pfizer basic page feature.
+ */
+
+include_once('pfizerbasic.features.inc');
