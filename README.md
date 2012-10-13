@@ -16,7 +16,8 @@ adding to this repo.
 breadcrumb_block:
   An extremely simple module that only creates a block with a breadcrumb that
   can be displayed wherever. I used this with Panels in a multi-site configuration
-  when a theme template was too static.
+  when a theme template was too static. I am sure "there's a module for that"
+  but in this case, this worked out easily.
 
 isotope_commerce_catalogue:
   Depends on Views Isotope (and Commerce Kickstart). This module creates a
